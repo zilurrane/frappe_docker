@@ -42,23 +42,23 @@ def cprint(*args, level: int = 1):
 		print(CYLW, message, reset)
 
 
-def clone_hrms_docker_repo() -> None:
+def clone_frappe_docker_repo() -> None:
 	try:
 		urllib.request.urlretrieve(
-			"https://github.com/zilurrane/hrms/archive/refs/heads/main.zip",
-			"hrms_docker.zip",
+			"https://github.com/zilurrane/frappe_docker/archive/refs/heads/main.zip",
+			"frappe_docker.zip",
 		)
-		logging.info("Downloaded hrms_docker zip file from GitHub")
+		logging.info("Downloaded frappe_docker zip file from GitHub")
 		unpack_archive(
-			"hrms_docker.zip", "."
-		)  # Unzipping the hrms_docker.zip creates a folder "hrms_docker-main"
-		move("hrms-main", "hrms_docker")
-		logging.info("Unzipped and Renamed hrms_docker")
-		os.remove("hrms_docker.zip")
+			"frappe_docker.zip", "."
+		)  # Unzipping the frappe_docker.zip creates a folder "frappe_docker-main"
+		move("frappe_docker-main", "frappe_docker")
+		logging.info("Unzipped and Renamed frappe_docker")
+		os.remove("frappe_docker.zip")
 		logging.info("Removed the downloaded zip file")
 	except Exception as e:
 		logging.error("Download and unzip failed", exc_info=True)
-		cprint("\nCloning hrms_docker Failed\n\n", "[ERROR]: ", e, level=1)
+		cprint("\nCloning frappe_docker Failed\n\n", "[ERROR]: ", e, level=1)
 
 
 def get_from_env(dir, file) -> Dict:
@@ -112,7 +112,7 @@ def generate_pass(length: int = 12) -> str:
 
 
 def check_repo_exists() -> bool:
-	return os.path.exists(os.path.join(os.getcwd(), "hrms_docker"))
+	return os.path.exists(os.path.join(os.getcwd(), "frappe_docker"))
 
 
 def setup_prod(project: str, sites, email: str, version: str = None, image = None) -> None:
@@ -121,9 +121,9 @@ def setup_prod(project: str, sites, email: str, version: str = None, image = Non
 
 	if check_repo_exists():
 		compose_file_name = os.path.join(os.path.expanduser("~"), f"{project}-compose.yml")
-		docker_repo_path = os.path.join(os.getcwd(), "hrms_docker")
+		docker_repo_path = os.path.join(os.getcwd(), "frappe_docker")
 		cprint(
-			"\nPlease refer to .example.env file in the hrms_docker folder to know which keys to set\n\n",
+			"\nPlease refer to .example.env file in the frappe_docker folder to know which keys to set\n\n",
 			level=3,
 		)
 		admin_pass = ""
@@ -210,7 +210,7 @@ def setup_prod(project: str, sites, email: str, version: str = None, image = Non
 
 	else:
 		install_docker()
-		clone_hrms_docker_repo()
+		clone_frappe_docker_repo()
 		setup_prod(project, sites, email, version, image)  # Recursive
 
 
@@ -228,11 +228,11 @@ def setup_dev_instance(project: str):
 					"up",
 					"-d",
 				],
-				cwd=os.path.join(os.getcwd(), "hrms_docker"),
+				cwd=os.path.join(os.getcwd(), "frappe_docker"),
 				check=True,
 			)
 			cprint(
-				"Please go through the Development Documentation: https://github.com/zilurrane/hrms/tree/main/development to fully complete the setup.",
+				"Please go through the Development Documentation: https://github.com/zilurrane/frappe_docker/tree/main/development to fully complete the setup.",
 				level=2,
 			)
 			logging.info("Development Setup completed")
@@ -241,7 +241,7 @@ def setup_dev_instance(project: str):
 			cprint("Setting Up Development Environment Failed\n", e)
 	else:
 		install_docker()
-		clone_hrms_docker_repo()
+		clone_frappe_docker_repo()
 		setup_dev_instance(project)  # Recursion on goes brrrr
 
 
